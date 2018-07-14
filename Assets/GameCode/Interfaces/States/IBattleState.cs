@@ -9,6 +9,7 @@ public interface IBattleState : IState
 
     AbilityMenuController AbilityMenuController { get; }
     StatPanelController StatPanelController { get; }
+    HitSuccessIndicator HitSuccessIndicator { get; }
 
     TurnData Turn { get; }
     List<Unit> Units { get; }

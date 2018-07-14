@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Party = System.Collections.Generic.List<UnityEngine.GameObject>;
 
-public class ExperienceTest : MonoBehaviour, IListener
+public class ExperienceTest : MonoBehaviour, IObserver
 {
     private void Start()
     {
@@ -9,8 +9,8 @@ public class ExperienceTest : MonoBehaviour, IListener
         VerifySharedExperience();
     }
 
-    private void OnEnable() => Enable();
-    private void OnDisable() => Disable();
+    private void OnEnable() => AddObservers();
+    private void OnDisable() => RemoveObservers();
 
     private void VerifyLevelToExperience()
     {
@@ -89,13 +89,13 @@ public class ExperienceTest : MonoBehaviour, IListener
         }
     }
 
-    public void Enable()
+    public void AddObservers()
     {
         this.AddObserver(OnLevelChange, Stats.OnChangeMessage(StatTypes.LVL));
         this.AddObserver(OnExperienceEffect, Stats.BeforeChangeMessage(StatTypes.EXP));
     }
 
-    public void Disable()
+    public void RemoveObservers()
     {
         this.RemoveObserver(OnLevelChange, Stats.OnChangeMessage(StatTypes.LVL));
         this.RemoveObserver(OnExperienceEffect, Stats.BeforeChangeMessage(StatTypes.EXP));

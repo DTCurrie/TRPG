@@ -108,7 +108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77febeea918ea415d9bcb3c32d212da1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _selectedColor: {r: 0, g: 0.8352941, b: 0.6862745, a: 1}
   Coordinates:
     x: 0
     y: 0
   Height: 0
+  Content: {fileID: 0}

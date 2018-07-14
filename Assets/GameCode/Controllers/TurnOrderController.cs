@@ -11,6 +11,7 @@ public class TurnOrderController : MonoBehaviour
 
     public const string BeforeRoundMessage = "TurnOrderController.BeforeRound";
     public const string OnTurnCheckedMessage = "TurnOrderController.OnTurnChecked";
+    public const string BeforeTurnMessage = "TurnOrderController.OnTurnChecked";
     public const string OnTurnCompletedMessage = "TurnOrderController.OnTurnCompleted";
     public const string OnRoundCompletedMessage = "TurnOrderController.OnRoundCompleted";
 
@@ -45,6 +46,7 @@ public class TurnOrderController : MonoBehaviour
                 if (CanTakeTurn(units[i]))
                 {
                     battleController.Turn.ChangeActor(units[i]);
+                    units[i].PostMessage(BeforeTurnMessage);
                     yield return units[i];
 
                     var cost = _turnCost;

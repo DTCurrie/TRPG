@@ -14,6 +14,7 @@ public class CommandSelectionState : MonoBehaviour, IAbilityMenuState
 
     public AbilityMenuController AbilityMenuController => Controller.AbilityMenuController;
     public StatPanelController StatPanelController => Controller.StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator => Controller.HitSuccessIndicator;
 
     public TurnData Turn => Controller.Turn;
     public List<Unit> Units => Controller.Units;
@@ -26,12 +27,7 @@ public class CommandSelectionState : MonoBehaviour, IAbilityMenuState
         StatPanelController.ShowPrimary(Turn.Actor.gameObject);
     }
 
-    public void Exit()
-    {
-        this.AbilityMenuStateExit();
-        StatPanelController.HidePrimary();
-    }
-
+    public void Exit() => this.AbilityMenuStateExit();
     public void OnDestroy() => RemoveListeners();
     public void AddListeners() => this.ToggleListeners(true);
     public void RemoveListeners() => this.ToggleListeners(false);

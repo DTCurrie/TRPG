@@ -16,6 +16,7 @@ public class BattleController : MonoBehaviour
 
     public AbilityMenuController AbilityMenuController;
     public StatPanelController StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator;
 
     public TurnData Turn = new TurnData();
     public List<Unit> Units = new List<Unit>();

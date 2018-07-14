@@ -6,7 +6,7 @@ public class ClampValueModifier : IValueModifier
 
     public readonly float Min;
     public readonly float Max;
-    
+
     public int Priority => _priority;
 
     public ClampValueModifier(int priority, float min, float max)
@@ -16,5 +16,5 @@ public class ClampValueModifier : IValueModifier
         Max = max;
     }
 
-    public float Modify(float value) => math.clamp(value, Min, Max);
+    public float Modify(float from, float to) => math.clamp(to, Min, Max);
 }

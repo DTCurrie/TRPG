@@ -2,6 +2,6 @@
 
 public interface IEffect
 {
-    bool Active { get; }
-    void Toggle();
+    bool DefaultActive { get; }
+    bool Active { get; set; }
 }

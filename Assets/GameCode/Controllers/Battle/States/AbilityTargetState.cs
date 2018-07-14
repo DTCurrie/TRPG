@@ -12,6 +12,7 @@ public class AbilityTargetState : MonoBehaviour, IBattleState
 
     public AbilityMenuController AbilityMenuController => Controller.AbilityMenuController;
     public StatPanelController StatPanelController => Controller.StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator => Controller.HitSuccessIndicator;
 
     public TurnData Turn => Controller.Turn;
     public List<Unit> Units => Controller.Units;
@@ -42,31 +43,22 @@ public class AbilityTargetState : MonoBehaviour, IBattleState
         _abilityRange = Turn.Ability.GetComponent<IAbilityRange>();
         SelectTiles();
         StatPanelController.ShowPrimary(Turn.Actor.gameObject);
-        if (_abilityRange.DirectionOriented)
-            this.RefreshSecondaryStatPanel(Controller.CurrentCoordinates);
     }
 
     public void Exit()
     {
         RemoveListeners();
         Controller.Board.ToggleTileSelection(_tiles, false);
-        StatPanelController.HidePrimary();
-        StatPanelController.HideSecondary();
     }
 
     public void OnDestroy() => RemoveListeners();
+
     public void AddListeners() => this.ToggleListeners(true);
     public void RemoveListeners() => this.ToggleListeners(false);
 
     public void OnMove(object sender, DataEventArgs<float2> e)
     {
-        if (_abilityRange.DirectionOriented)
-            ChangeDirection(e.Data);
-        else
-        {
-            this.SelectTile(e.Data + Controller.CurrentCoordinates);
-            this.RefreshSecondaryStatPanel(Controller.CurrentCoordinates);
-        }
+        if (_abilityRange.DirectionOriented) ChangeDirection(e.Data);
     }
 
     public void OnFire(object sender, DataEventArgs<int> e)
@@ -79,13 +71,23 @@ public class AbilityTargetState : MonoBehaviour, IBattleState
             if (Physics.Raycast(ray, out hit))
             {
                 var tile = hit.transform.GetComponent<Tile>();
-                if (tile && (_abilityRange.DirectionOriented || _tiles.Contains(tile)))
+
+                if (!tile) return;
+
+                if (tile == Controller.CurrentTile)
                     Controller.StateMachine.ChangeState<ConfirmAbilityTargetState>();
+
+                if (tile.Content != null && (_abilityRange.DirectionOriented || _tiles.Contains(tile)))
+                {
+                    this.SelectTile(tile.Coordinates);
+                    this.RefreshSecondaryStatPanel(tile.Coordinates);
+                }
             }
 
         }
         else if (e.Data == 2)
         {
+            StatPanelController.HideSecondary();
             Controller.StateMachine.ChangeState<CategorySelectionState>();
         }
     }

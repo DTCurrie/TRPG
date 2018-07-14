@@ -20,5 +20,7 @@ MonoBehaviour:
   - 8.8
   - 9.2
   - 0.8
+  EVD: 50
+  RES: 50
   MOV: 3
   JMP: 2

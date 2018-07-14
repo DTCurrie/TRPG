@@ -10,6 +10,7 @@ public class PerformAbilityState : MonoBehaviour, IBattleState
 
     public AbilityMenuController AbilityMenuController => Controller.AbilityMenuController;
     public StatPanelController StatPanelController => Controller.StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator => Controller.HitSuccessIndicator;
 
     public TurnData Turn => Controller.Turn;
     public List<Unit> Units => Controller.Units;
@@ -18,24 +19,35 @@ public class PerformAbilityState : MonoBehaviour, IBattleState
 
     private IEnumerator Animate()
     {
+        ApplyAbility();
         yield return null;
-        PrototypeAttack();
+        StatPanelController.ShowPrimary(Turn.Actor.gameObject);
         if (Turn.Moved)
             Controller.StateMachine.ChangeState<EndFacingState>();
         else
             Controller.StateMachine.ChangeState<CommandSelectionState>();
     }
 
-    private void PrototypeAttack()
+    private void ApplyAbility()
     {
+        var effects = Turn.Ability.GetComponentsInChildren<IAbilityEffect>();
+
         for (var i = 0; i < Turn.Targets.Count; i++)
         {
-            var obj = Turn.Targets[i].Content;
-            var stats = obj?.GetComponentInChildren<Stats>();
-            if (stats != null)
+            var target = Turn.Targets[i];
+
+            for (int j = 0; j < effects.Length; j++)
             {
-                stats[StatTypes.HP] -= 50;
-                if (stats[StatTypes.HP] <= 0) Debug.Log("KO'd Uni!", obj);
+                var effect = effects[j];
+                var targeter = ((Component)effect).GetComponent<IAbilityTarget>();
+                if (targeter.IsTarget(target))
+                {
+                    var hitRate = ((Component)effect).GetComponent<IHitRate>();
+                    var chance = hitRate.Calculate(target);
+
+                    if (UnityEngine.Random.Range(0, 101) > chance) continue;
+                    effect.Apply(target);
+                }
             }
         }
     }

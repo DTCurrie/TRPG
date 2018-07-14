@@ -9,15 +9,12 @@ public class ExploreState : MonoBehaviour, IBattleState
 
     public AbilityMenuController AbilityMenuController => Controller.AbilityMenuController;
     public StatPanelController StatPanelController => Controller.StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator => Controller.HitSuccessIndicator;
 
     public TurnData Turn => Controller.Turn;
     public List<Unit> Units => Controller.Units;
 
     private void Awake() => Controller = GetComponent<BattleController>();
-    private void Start()
-    {
-        Debug.Log("Explore");
-    }
 
     public void Enter()
     {

@@ -5,7 +5,7 @@ public class CameraRig : MonoBehaviour
 {
     private Transform _transform;
 
-    public float Speed = 3f;
+    public float MoveTime = 0.15f;
     public Transform Follow;
 
     private void Awake()
@@ -15,7 +15,21 @@ public class CameraRig : MonoBehaviour
 
     private void Update()
     {
-        if (Follow) 
-            _transform.position = Vector3.Lerp(_transform.position, Follow.position, Speed * Time.deltaTime);
+        if (Follow) StartCoroutine(Move());
+    }
+
+    private IEnumerator Move()
+    {
+        var position = _transform.position;
+        var elapsed = 0f;
+
+        while (elapsed <= MoveTime)
+        {
+            elapsed += Time.deltaTime;
+            _transform.position = Vector3.Lerp(position, Follow.position, elapsed / MoveTime);
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
     }
 }

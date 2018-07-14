@@ -2,5 +2,5 @@
 
 public interface IValueModifier : IModifier
 {
-    float Modify(float value);
+    float Modify(float from, float to);
 }

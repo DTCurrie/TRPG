@@ -8,6 +8,8 @@ public class JobData : ScriptableObject, IParseable
     public int[] BaseStats = new int[Job.StatOrder.Length];
     public float[] GrowthStats = new float[Job.StatOrder.Length];
 
+    public int EVD;
+    public int RES;
     public int MOV;
     public int JMP;
 
@@ -23,7 +25,9 @@ public class JobData : ScriptableObject, IParseable
             GrowthStats[i / 2] = float.Parse(elements[i + 2]);
         }
 
-        MOV = Convert.ToInt32(elements[15]);
-        JMP = Convert.ToInt32(elements[16]);
+        EVD = Convert.ToInt32(elements[15]);
+        RES = Convert.ToInt32(elements[16]);
+        MOV = Convert.ToInt32(elements[17]);
+        JMP = Convert.ToInt32(elements[18]);
     }
 }

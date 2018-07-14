@@ -14,6 +14,7 @@ public class CategorySelectionState : MonoBehaviour, IAbilityMenuState
 
     public AbilityMenuController AbilityMenuController => Controller.AbilityMenuController;
     public StatPanelController StatPanelController => Controller.StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator => Controller.HitSuccessIndicator;
 
     public TurnData Turn => Controller.Turn;
     public List<Unit> Units => Controller.Units;
@@ -22,7 +23,13 @@ public class CategorySelectionState : MonoBehaviour, IAbilityMenuState
 
     private void Attack()
     {
-        Turn.Ability = ((Component)Turn.Actor.GetComponentInChildren<IAbilityRange>()).gameObject;
+        Turn.Ability = Turn.Actor.transform.Find("Attack").gameObject;
+        Controller.StateMachine.ChangeState<AbilityTargetState>();
+    }
+
+    private void PoisonDart()
+    {
+        Turn.Ability = Turn.Actor.transform.Find("Poison Dart").gameObject;
         Controller.StateMachine.ChangeState<AbilityTargetState>();
     }
 
@@ -32,12 +39,7 @@ public class CategorySelectionState : MonoBehaviour, IAbilityMenuState
         StatPanelController.ShowPrimary(Turn.Actor.gameObject);
     }
 
-    public void Exit()
-    {
-        this.AbilityMenuStateExit();
-        StatPanelController.HidePrimary();
-    }
-
+    public void Exit() => this.AbilityMenuStateExit();
     public void OnDestroy() => RemoveListeners();
     public void AddListeners() => this.ToggleListeners(true);
     public void RemoveListeners() => this.ToggleListeners(false);
@@ -49,6 +51,7 @@ public class CategorySelectionState : MonoBehaviour, IAbilityMenuState
         _menuOptions = new Dictionary<string, Action>
         {
             {"Attack", Attack},
+            {"Poison Dart", PoisonDart},
             {
                 "White Magic",
                 () => {

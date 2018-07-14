@@ -1,43 +1,40 @@
 ﻿using System.Collections.Generic;
 
-public class ValueChangeEffect : IValueEffect
+public class ValueChangeEffect : IEffect
 {
-    private bool _active;
-    private List<IValueModifier> _modifiers;
-
     public readonly float FromValue;
     public readonly float ToValue;
     public float Delta => ToValue - FromValue;
-    
-    public bool Active => _active;
-    public List<IValueModifier> Modifiers => _modifiers;
 
-    public ValueChangeEffect(float fromValue, float toValue, bool active = true) 
+    public bool DefaultActive { get; private set; }
+    public bool Active { get; set; }
+    public List<IValueModifier> Modifiers { get; private set; }
+
+    public ValueChangeEffect(float fromValue, float toValue, bool defaultActive = true)
     {
         FromValue = fromValue;
         ToValue = toValue;
-        _active = active;
+        DefaultActive = defaultActive;
+        Active = defaultActive;
     }
 
     public void AddModifier(IValueModifier modifier)
     {
-        if (_modifiers == null) _modifiers = new List<IValueModifier>();
-        _modifiers.Add(modifier);
+        if (Modifiers == null) Modifiers = new List<IValueModifier>();
+        Modifiers.Add(modifier);
     }
 
     public float ModifiedValue()
     {
+        if (Modifiers == null) return ToValue;
         var value = ToValue;
-        if (_modifiers == null) return value;
 
-        _modifiers.Sort(ComparePriorities);
-        for (int i = 0; i < _modifiers.Count; ++i)
-            value = _modifiers[i].Modify(value);
+        Modifiers.Sort(ComparePriorities);
+        for (int i = 0; i < Modifiers.Count; ++i)
+            value = Modifiers[i].Modify(FromValue, value);
 
         return value;
     }
-
-    public void Toggle() => _active = !_active;
 
     public int ComparePriorities(IModifier a, IModifier b) => a.Priority.CompareTo(b.Priority);
 }

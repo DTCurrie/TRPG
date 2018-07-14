@@ -2,33 +2,30 @@
 
 public class StatModifierAttribute : MonoBehaviour, IAttribute
 {
-    private GameObject _owner;
-    private GameObject _target;
-
     public StatTypes Stat;
     public int Modifier;
 
-    private Stats Stats => _target.GetComponent<Stats>();
+    private Stats Stats => Target.GetComponent<Stats>();
 
-    public GameObject Owner => _owner;
-    public GameObject Target => _target;
+    public GameObject Owner { get; private set; }
+    public GameObject Target { get; private set; }
 
     public void Activate(GameObject target, bool use = false)
     {
-        if (_target == null)
+        if (Target == null)
         {
-            _target = target;
+            Target = target;
             OnActivate();
-            if (use) _target = null;
+            if (use) Target = null;
         }
     }
 
     public void Deactivate()
     {
-        if (_target != null)
+        if (Target != null)
         {
             OnDeactivate();
-            _target = null;
+            Target = null;
         }
     }
 

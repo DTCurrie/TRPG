@@ -1,15 +1,11 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class FlagEffect : MonoBehaviour, IEffect
+﻿public class FlagEffect : IEffect
 {
-    private bool _active;
-    public bool Active => _active;
+    public bool DefaultActive { get; private set; }
+    public bool Active { get; set; }
 
-    public FlagEffect(bool active)
+    public FlagEffect(bool defaultActive)
     {
-        _active = active;
+        DefaultActive = defaultActive;
+        Active = defaultActive;
     }
-
-    public void Toggle() => _active = !_active;
 }

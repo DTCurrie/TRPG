@@ -14,5 +14,5 @@ public class MinValueModifier : IValueModifier
         Min = min;
     }
 
-    public float Modify(float value) => math.min(value, Min);
+    public float Modify(float from, float to) => math.min(to, Min);
 }

@@ -10,6 +10,7 @@ public class InitBattleState : MonoBehaviour, IBattleState
 
     public AbilityMenuController AbilityMenuController => Controller.AbilityMenuController;
     public StatPanelController StatPanelController => Controller.StatPanelController;
+    public HitSuccessIndicator HitSuccessIndicator => Controller.HitSuccessIndicator;
 
     public TurnData Turn => Controller.Turn;
     public List<Unit> Units => Controller.Units;
@@ -34,8 +35,9 @@ public class InitBattleState : MonoBehaviour, IBattleState
         for (int i = 0; i < jobs.Length; i++)
         {
             var instance = Instantiate(Controller.HeroPrefab);
-            var stats = instance.AddComponent<Stats>();
+            instance.gameObject.name = jobs[i];
 
+            var stats = instance.AddComponent<Stats>();
             stats[StatTypes.LVL] = 1;
 
             var jobPrefab = Resources.Load<GameObject>($"Jobs/{jobs[i]}");
@@ -46,29 +48,6 @@ public class InitBattleState : MonoBehaviour, IBattleState
 
             job.Employ();
             job.LoadDefaultStats();
-
-            var attackInstance = new GameObject("Attack");
-
-            switch (i)
-            {
-                case 0:
-                    attackInstance.AddComponent<ConstantAbilityRange>().Horizontal = 3;
-                    attackInstance.AddComponent<UnitAbilityArea>();
-                    attackInstance.AddComponent<DefaultAbilityTarget>();
-                    break;
-                case 1:
-                    attackInstance.AddComponent<ConeAbilityRange>().Horizontal = 3;
-                    attackInstance.AddComponent<FillAreaAbility>();
-                    attackInstance.AddComponent<DefaultAbilityTarget>();
-                    break;
-                case 2:
-                    attackInstance.AddComponent<LineAbilityRange>();
-                    attackInstance.AddComponent<SpecifiedAbilityArea>();
-                    attackInstance.AddComponent<DefaultAbilityTarget>();
-                    break;
-            }
-
-            attackInstance.transform.SetParent(instance.transform);
 
             var rank = instance.AddComponent<Rank>();
             rank.Init(10);

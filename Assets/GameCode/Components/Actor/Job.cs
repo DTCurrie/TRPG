@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-public class Job : MonoBehaviour
+public class Job : MonoBehaviour, IObserver
 {
     private Stats _stats;
 
@@ -19,15 +19,18 @@ public class Job : MonoBehaviour
     public int[] BaseStats = new int[StatOrder.Length];
     public float[] GrowthStats = new float[StatOrder.Length];
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() => RemoveObservers();
+
+    public void AddObservers() =>
+        this.AddObserver(OnLevelChangeMessage, Stats.OnChangeMessage(StatTypes.LVL), _stats);
+
+    public void RemoveObservers() =>
         this.RemoveObserver(OnLevelChangeMessage, Stats.OnChangeMessage(StatTypes.LVL));
-    }
 
     public void Employ()
     {
         _stats = gameObject.GetComponentInParent<Stats>();
-        this.AddObserver(OnLevelChangeMessage, Stats.OnChangeMessage(StatTypes.LVL), _stats);
+        AddObservers();
 
         var attributes = GetComponentsInChildren<IAttribute>();
         for (var i = 0; i < attributes.Length; i++)

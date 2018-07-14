@@ -63,10 +63,9 @@ public class ConversationController : MonoBehaviour
     {
         var position = panel.PanelRect.anchoredPosition;
         var time = 0.5f;
-        var threshold = 0.05f;
         var elapsed = 0f;
 
-        while (Vector3.Distance(panel.PanelRect.anchoredPosition, targetPosition) >= threshold)
+        while (elapsed <= time)
         {
             elapsed += Time.deltaTime;
             panel.PanelRect.anchoredPosition = Vector2.Lerp(position, targetPosition, elapsed / time);

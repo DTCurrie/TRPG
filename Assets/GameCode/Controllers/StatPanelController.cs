@@ -7,6 +7,9 @@ public class StatPanelController : MonoBehaviour
     private Vector2 _primaryPanelPosition;
     private Vector2 _secondaryPanelPosition;
 
+    private bool _showingPrimary;
+    private bool _showingSecondary;
+
     public StatPanel PrimaryPanel;
     public StatPanel SecondaryPanel;
 
@@ -20,44 +23,48 @@ public class StatPanelController : MonoBehaviour
 
         PrimaryPanel.PanelRect.anchoredPosition = PanelHiddenPosition(PrimaryPanel);
         SecondaryPanel.PanelRect.anchoredPosition = PanelHiddenPosition(SecondaryPanel);
+
+        _showingPrimary = false;
+        _showingSecondary = false;
     }
 
     public void ShowPrimary(GameObject obj)
     {
         PrimaryPanel.Display(obj);
-        if (PrimaryPanel.PanelRect.anchoredPosition == _primaryPanelPosition)
-            return;
+        if (_showingPrimary) return;
         StartCoroutine(MovePanel(PrimaryPanel, _primaryPanelPosition));
+        _showingPrimary = true;
     }
 
     public void HidePrimary()
     {
-        if (PrimaryPanel.PanelRect.anchoredPosition != _primaryPanelPosition) return;
+        if (!_showingPrimary) return;
         StartCoroutine(MovePanel(PrimaryPanel, PanelHiddenPosition(PrimaryPanel)));
+        _showingPrimary = false;
     }
 
     public void ShowSecondary(GameObject obj)
     {
-        if (SecondaryPanel.PanelRect.anchoredPosition == _secondaryPanelPosition)
-            return;
         SecondaryPanel.Display(obj);
+        if (_showingSecondary) return;
         StartCoroutine(MovePanel(SecondaryPanel, _secondaryPanelPosition));
+        _showingSecondary = true;
     }
 
     public void HideSecondary()
     {
-        if (PrimaryPanel.PanelRect.anchoredPosition != _secondaryPanelPosition) return;
+        if (!_showingSecondary) return;
         StartCoroutine(MovePanel(SecondaryPanel, PanelHiddenPosition(SecondaryPanel)));
+        _showingSecondary = false;
     }
 
     private IEnumerator MovePanel(StatPanel panel, Vector2 targetPosition)
     {
         var position = panel.PanelRect.anchoredPosition;
         var time = 0.5f;
-        var threshold = 0.05f;
         var elapsed = 0f;
 
-        while (Vector3.Distance(panel.PanelRect.anchoredPosition, targetPosition) >= threshold)
+        while (elapsed <= time)
         {
             elapsed += Time.deltaTime;
             panel.PanelRect.anchoredPosition = Vector2.Lerp(position, targetPosition, elapsed / time);

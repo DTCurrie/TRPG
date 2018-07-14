@@ -6,23 +6,18 @@ public class StateMachine : MonoBehaviour
     private IState _currentState;
     private bool _transitioning;
 
-    public IState CurrentState { get => _currentState; set => StartCoroutine(Transition(value)); }
+    public IState CurrentState { get => _currentState; set => Transition(value); }
 
-    private IEnumerator Transition(IState state)
+    private void Transition(IState state)
     {
-        if (_currentState == state || _transitioning) yield break;
+        if (_currentState == state || _transitioning) return;
         _transitioning = true;
 
         if (_currentState != null) _currentState.Exit();
-
-        yield return new WaitForFixedUpdate();
         _currentState = state;
 
         if (_currentState != null) _currentState.Enter();
-        yield return new WaitForFixedUpdate();
-
         _transitioning = false;
-        yield return null;
     }
 
     public T GetState<T>() where T : Component, IState

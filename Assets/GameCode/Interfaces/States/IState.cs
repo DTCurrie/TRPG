@@ -1,8 +1,6 @@
-﻿public interface IState
+﻿public interface IState : IListener
 {
     void Enter();
     void Exit();
     void OnDestroy();
-    void AddListeners();
-    void RemoveListeners();
 }

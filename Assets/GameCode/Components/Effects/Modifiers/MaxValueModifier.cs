@@ -14,5 +14,5 @@ public class MaxValueModifier : IValueModifier
         Max = max;
     }
 
-    public float Modify(float value) => math.max(value, Max);
+    public float Modify(float from, float to) => math.max(to, Max);
 }

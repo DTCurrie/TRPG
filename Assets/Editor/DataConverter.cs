@@ -25,6 +25,8 @@ public class DataConverter : AssetPostprocessor
                         job.BaseStats = jobData.BaseStats;
                         job.GrowthStats = jobData.GrowthStats;
 
+                        GetAttribute(obj, StatTypes.EVD).Modifier = jobData.EVD;
+                        GetAttribute(obj, StatTypes.RES).Modifier = jobData.RES;
                         GetAttribute(obj, StatTypes.MOV).Modifier = jobData.MOV;
                         GetAttribute(obj, StatTypes.JMP).Modifier = jobData.JMP;
                     }

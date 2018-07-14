@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-public class Rank : MonoBehaviour, IListener
+public class Rank : MonoBehaviour, IObserver
 {
     private Stats _stats;
 
@@ -19,8 +19,8 @@ public class Rank : MonoBehaviour, IListener
     public float LevelProgress => (LVL - MinLevel) / (float)(MaxLevel - MinLevel);
 
     private void Awake() => _stats = GetComponent<Stats>();
-    private void OnEnable() => Enable();
-    private void OnDisable() => Disable();
+    private void OnEnable() => AddObservers();
+    private void OnDisable() => RemoveObservers();
 
     private void BeforeExpChange(object sender, object effect) =>
         ((ValueChangeEffect)effect).AddModifier(new ClampValueModifier(int.MaxValue, EXP, MaxExp));
@@ -34,13 +34,13 @@ public class Rank : MonoBehaviour, IListener
         _stats.SetValue(StatTypes.EXP, ExperienceForLevel(level), false);
     }
 
-    public void Enable()
+    public void AddObservers()
     {
         this.AddObserver(BeforeExpChange, Stats.BeforeChangeMessage(StatTypes.EXP));
         this.AddObserver(OnExpChange, Stats.OnChangeMessage(StatTypes.EXP));
     }
 
-    public void Disable()
+    public void RemoveObservers()
     {
         this.RemoveObserver(BeforeExpChange, Stats.BeforeChangeMessage(StatTypes.EXP));
         this.RemoveObserver(OnExpChange, Stats.OnChangeMessage(StatTypes.EXP));
@@ -55,7 +55,7 @@ public class Rank : MonoBehaviour, IListener
     public static int LevelForExperience(int exp)
     {
         var level = MaxLevel;
-        for (; level >= MinLevel ; level--)
+        for (; level >= MinLevel; level--)
             if (exp >= ExperienceForLevel(level))
                 break;
         return level;

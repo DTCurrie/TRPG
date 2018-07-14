@@ -16,12 +16,12 @@ public class MessageTest : MonoBehaviour
         for (int i = 0; i < listenerCount; ++i)
         {
             listeners[i] = new TestListener();
-            listeners[i].Enable();
+            listeners[i].AddObservers();
         }
 
         this.PostMessage(MessageType);
 
-        for (int i = 0; i < listeners.Length; ++i) listeners[i].Disable();
+        for (int i = 0; i < listeners.Length; ++i) listeners[i].RemoveObservers();
         MessageCenter.Instance.Clean();
     }
 
@@ -30,17 +30,17 @@ public class MessageTest : MonoBehaviour
         GUI.Label(new Rect(10, 10, 100, 40), "Press Space to Test Listeneres");
     }
 
-    private class TestListener : IListener
+    private class TestListener : IObserver
     {
         public const string Clear = "TestListener.Clear";
 
-        public void Enable()
+        public void AddObservers()
         {
             ((object)this).AddObserver(OnTest, MessageType);
             this.AddObserver(OnClear, Clear);
         }
 
-        public void Disable()
+        public void RemoveObservers()
         {
             this.RemoveObserver(OnTest, MessageType);
             this.RemoveObserver(OnClear, Clear);

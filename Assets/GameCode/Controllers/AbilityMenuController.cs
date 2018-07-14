@@ -11,35 +11,38 @@ public class AbilityMenuController : MonoBehaviour, IPooler<AbilityMenuEntry>
     private List<AbilityMenuEntry> _menuEntries = new List<AbilityMenuEntry>(_menuCount);
 
     private Vector2 _menuPosition;
-    [SerializeField] private Vector2 _menuHiddenPosition;
+    private float _menuHeight;
 
-    [SerializeField] private GameObject _entryPrefab;
     private int _index;
     private List<Poolable> _instances = new List<Poolable>();
 
     private RectTransform _entryPrefabRect;
 
+    public GameObject EntryPrefab;
+    public Canvas Canvas;
     public TextMeshProUGUI Title;
     public AbilityMenuPanel Panel;
-    public Canvas Canvas;
 
     public int CurrentSelection { get; private set; }
+
+    private float2 PanelHiddenPosition =>
+        new float2(-Panel.PanelRect.anchoredPosition.x, -_menuHeight / 2);
 
     private void Awake()
     {
         _index = PoolController.GetIndex("AbilityMenuEntries");
-        PoolController.AddPool(_index, _entryPrefab, _menuCount, 0);
+        PoolController.AddPool(_index, EntryPrefab, _menuCount, 0);
     }
 
     private void Start()
     {
         _menuPosition = Panel.PanelRect.anchoredPosition;
-        _menuHiddenPosition = new float2(-Panel.PanelRect.anchoredPosition.x, Panel.PanelRect.anchoredPosition.y);
+        _menuHeight = Panel.PanelRect.rect.size.y;
 
-        Panel.PanelRect.anchoredPosition = _menuHiddenPosition;
+        _entryPrefabRect = EntryPrefab.GetComponent<RectTransform>();
+
+        Panel.PanelRect.anchoredPosition = PanelHiddenPosition;
         Canvas.gameObject.SetActive(false);
-
-        _entryPrefabRect = _entryPrefab.GetComponent<RectTransform>();
     }
 
     public AbilityMenuEntry Dequeue()
@@ -64,10 +67,9 @@ public class AbilityMenuController : MonoBehaviour, IPooler<AbilityMenuEntry>
     {
         var position = Panel.PanelRect.anchoredPosition;
         var time = 0.5f;
-        var threshold = 0.05f;
         var elapsed = 0f;
 
-        while (Vector3.Distance(Panel.PanelRect.anchoredPosition, targetPosition) >= threshold)
+        while (elapsed <= time)
         {
             elapsed += Time.deltaTime;
             Panel.PanelRect.anchoredPosition = Vector2.Lerp(position, targetPosition, elapsed / time);
@@ -107,6 +109,8 @@ public class AbilityMenuController : MonoBehaviour, IPooler<AbilityMenuEntry>
 
     public IEnumerator Show(string title, Dictionary<string, Action> options)
     {
+        _menuHeight = 100 + ((options.Count) * 60);
+
         ClearEntries();
         Title.text = title;
 
@@ -130,17 +134,15 @@ public class AbilityMenuController : MonoBehaviour, IPooler<AbilityMenuEntry>
         }
 
         SetSelection(_menuEntries[0]);
-        Panel.PanelRect.rect.Set(Panel.PanelRect.rect.x, Panel.PanelRect.rect.y, Panel.PanelRect.rect.width, 100 + options.Count * 60);
-        Panel.PanelRect.anchoredPosition = new Vector2(Panel.PanelRect.anchoredPosition.x, -Panel.PanelRect.rect.height / 2);
-        yield return null;
-
+        Panel.PanelRect.sizeDelta = new float2(Panel.PanelRect.sizeDelta.x, _menuHeight);
+        Panel.PanelRect.anchoredPosition = new float2(Panel.PanelRect.anchoredPosition.x, -_menuHeight / 2);
         Canvas.gameObject.SetActive(true);
-        yield return StartCoroutine(MovePanel(_menuPosition));
+        yield return StartCoroutine(MovePanel(new float2(_menuPosition.x, -_menuHeight / 2)));
     }
 
     public IEnumerator Hide()
     {
-        yield return StartCoroutine(MovePanel(_menuPosition));
+        yield return StartCoroutine(MovePanel(PanelHiddenPosition));
         Canvas.gameObject.SetActive(false);
         yield return null;
     }

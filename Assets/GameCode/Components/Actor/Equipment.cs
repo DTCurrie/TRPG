@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class Equipment : MonoBehaviour
 {
@@ -39,5 +40,15 @@ public class Equipment : MonoBehaviour
             if ((item.CurrentSlot & slot) != EquipmentSlots.None)
                 Unequip(item);
         }
+    }
+
+    public Equippable GetItem(EquipmentSlots slot)
+    {
+        for (var i = 0; i < Items.Count; i++)
+        {
+            var item = _items[i];
+            if ((item.CurrentSlot & slot) != EquipmentSlots.None) return item;
+        }
+        return null;
     }
 }

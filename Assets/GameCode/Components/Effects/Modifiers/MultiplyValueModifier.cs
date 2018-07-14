@@ -14,5 +14,5 @@ public class MultiplyValueModifier : IValueModifier
         Value = value;
     }
 
-    public float Modify(float value) => value * Value;
+    public float Modify(float from, float to) => to * Value;
 }

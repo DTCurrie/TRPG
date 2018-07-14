@@ -5,7 +5,6 @@ public class Unit : MonoBehaviour
 {
     public Tile CurrentTile { get; protected set; }
     public Directions Direction;
-
     public void Place(Tile target)
     {
         if (CurrentTile != null && CurrentTile.Content == gameObject)
